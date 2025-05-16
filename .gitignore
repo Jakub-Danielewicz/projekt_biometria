@@ -175,3 +175,10 @@ cython_debug/
 
 # customowe
 *pdf
+*png
+
+#conda
+.conda
+images/
+images_processed/
+data/
