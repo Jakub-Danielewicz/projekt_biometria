@@ -14,6 +14,7 @@ transform = transforms.Compose([
 
 # Create the dataset (no transforms for now)
 dataset = OCRDataset(image_paths, labels, transform=transform)
+dataset.apply_transform()
 
 # Pick an index to display
 idx = 15

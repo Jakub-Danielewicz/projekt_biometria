@@ -126,8 +126,8 @@ full_column_list = [
 
 column_cycle = [7, 7, 7, 7, 6]
 
-input_folder = "data/processed_images"  # <- podmień na swoją
-output_folder = "data/output_letters"
+input_folder = "../data/processed_images"  # <- podmień na swoją
+output_folder = "../data/output_letters"
 
 import re
 
