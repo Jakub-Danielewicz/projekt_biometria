@@ -10,6 +10,7 @@ image_paths, labels = scan_image_folder(data_dir)
 transform = transforms.Compose([
     transforms.Resize((64, 64)),
     transforms.Threshold(100),
+    transforms.ToTensor()
 ])
 
 # Create the dataset (no transforms for now)
@@ -21,7 +22,9 @@ idx = 15
 image, label = dataset[idx]
 
 # Display the image and label
-plt.imshow(image, cmap='gray')
-plt.title(f"Label: {label}")
-plt.axis('off')
-plt.show()
+#plt.imshow(image, cmap='gray')
+#plt.title(f"Label: {label}")
+#plt.axis('off')
+#plt.show()
+print(f"Image shape: {image.shape}")
+print(f"Label: {label}")
