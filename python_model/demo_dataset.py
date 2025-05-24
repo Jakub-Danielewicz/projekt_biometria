@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from data import scan_image_folder, OCRDataset, transforms
 
-data_dir = "data/output_letters"
+data_dir = "python_model/data/output_letters_cleaned"
 
 # Scan the directory and get image paths and labels
 image_paths, labels = scan_image_folder(data_dir)
@@ -9,7 +9,7 @@ image_paths, labels = scan_image_folder(data_dir)
 # Compose your transform pipeline
 transform = transforms.Compose([
     transforms.Resize((64, 64)),
-    transforms.Threshold(100),
+    transforms.Threshold(200),
     transforms.ToTensor()
 ])
 
@@ -22,9 +22,9 @@ idx = 15
 image, label = dataset[idx]
 
 # Display the image and label
-#plt.imshow(image, cmap='gray')
-#plt.title(f"Label: {label}")
-#plt.axis('off')
-#plt.show()
+plt.imshow(image.squeeze(0), cmap='gray')
+plt.title(f"Label: {label}")
+plt.axis('off')
+plt.show()
 print(f"Image shape: {image.shape}")
 print(f"Label: {label}")
