@@ -26,7 +26,7 @@ def validateModel(model, dataloader):
 VAL_EVERY = 3
 BATCH_SIZE = 8
 LR = 0.001
-DATA_DIR = ".\python_model\data\set\output_letters_cleaned"
+DATA_DIR = "./python_model/data/set/test_miniset"
 
 if __name__ == "__main__":
     # Transform pipeline
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     if torch.cuda.is_available():
         print("Trenowanie na CUDA")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = HandwritingCNN(num_classes=len(set(labels))).to(device)
+    model = HandwritingMLP(num_classes=len(set(labels))).to(device)
 
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
