@@ -21,7 +21,7 @@ class OCRDataLoader(DataLoader):
             'num_workers': num_workers
         }
         super().__init__(sampler=self.sampler, **self.init_kwargs)
-
+        
     def _split_sampler(self, split):
         if split == 0.0:
             return None, None

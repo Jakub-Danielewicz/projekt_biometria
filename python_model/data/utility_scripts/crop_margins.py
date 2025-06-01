@@ -33,5 +33,5 @@ def crop_all_tables_in_folder(folder):
             print(f"✅ Przycięto: {fname}")
 
 if __name__ == "__main__":
-    folder_path = "data/processed_images"  # <-- podaj swoją ścieżkę
+    folder_path = "../data/processed_images"  # <-- podaj swoją ścieżkę
     crop_all_tables_in_folder(folder_path)
