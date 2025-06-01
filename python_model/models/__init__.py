@@ -1,2 +1,2 @@
 from .model import Model
-from .cnn import CNNModel  
+from .cnn import CNNModel, HandwritingCNN
