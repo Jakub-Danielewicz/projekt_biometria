@@ -22,8 +22,8 @@ def validateModel(model, dataloader):
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             _, preds = torch.max(outputs, 1)
-            for p, l in zip(preds.tolist(), labels.tolist()):
-                print(f"Predykcja: {setoflabels[p]}, label: {setoflabels[l]}")
+           # for p, l in zip(preds.tolist(), labels.tolist()):
+            #    print(f"Predykcja: {setoflabels[p]}, label: {setoflabels[l]}")
             correct += (preds == labels).sum().item()
             total += labels.size(0)
     return correct/total
