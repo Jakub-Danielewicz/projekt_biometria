@@ -25,16 +25,16 @@ def validateModel(model, dataloader):
 
 VAL_EVERY = 3
 BATCH_SIZE = 8
-LR = 0.01
+LR = 0.001
 DATA_DIR = ".\python_model\data\set\output_letters_cleaned"
 
 if __name__ == "__main__":
     # Transform pipeline
     transform = Compose([
         Resize((64, 64)),
-        Threshold(190),
-        Erode(),
-        Invert(),
+       # Threshold(190),
+       # Erode(),
+       # Invert(),
         ToTensor()
     ])
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     if torch.cuda.is_available():
         print("Trenowanie na CUDA")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = HandwritingMLP(num_classes=len(set(labels))).to(device)
+    model = HandwritingCNN(num_classes=len(set(labels))).to(device)
 
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
@@ -68,15 +68,24 @@ if __name__ == "__main__":
     for epoch in range(15):
         model.train()
         total_loss = 0
+        i = 0
+        correct = 0
         for images, labels in train_loader:
+           # print("images:", images.shape, images.min().item(), images.max().item())
+           # print("labels:", labels[:10])
+            #break
             images, labels = images.to(device), labels.to(device)
             optimizer.zero_grad()
             outputs = model(images)
             loss = loss_fn(outputs, labels)
+            _, preds = torch.max(outputs, 1)
+            correct += (preds == labels).sum().item()
+
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
-        print(f"Epoch {epoch+1} - loss: {total_loss:.4f}")
+            i += BATCH_SIZE
+        print(f"Epoch {epoch+1} - loss: {total_loss:.4f} - accuracy: {correct/i * 100:.4f}%")
         if (epoch+1)%VAL_EVERY == 0:
             print(f"Dokładność na zbiorze walidacyjnym: {validateModel(model, val_loader)*100}%")
 
