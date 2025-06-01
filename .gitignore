@@ -181,3 +181,4 @@ cython_debug/
 .conda
 images/
 images_processed/
+*.pth

@@ -31,7 +31,7 @@ def validateModel(model, dataloader):
 VAL_EVERY = 3
 BATCH_SIZE =  32
 LR = 0.001
-NUM_EPOCHS = 50
+NUM_EPOCHS = 100
 DATA_DIR = "./python_model/data/set/output_letters_cleaned"
 
 if __name__ == "__main__":
@@ -104,3 +104,4 @@ if __name__ == "__main__":
             print(f"Dokładność na zbiorze walidacyjnym: {validateModel(model, val_loader)*100}%")
 
 
+    torch.save(model.state_dict(), "model_testowy.pth")
