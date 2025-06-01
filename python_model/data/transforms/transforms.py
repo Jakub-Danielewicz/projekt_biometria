@@ -48,3 +48,16 @@ class Compose(Transform):
         for t in self.transforms:
             image = t(image)
         return image
+
+class Erode(Transform):
+    def __init__(self, kernel_size=2):
+        self.kernel = np.ones((kernel_size, kernel_size), np.uint8)
+    def __call__(self, image):
+        import cv2
+        return cv2.erode(image, self.kernel, iterations=1)
+
+class Invert(Transform):
+    def __call__(self, image):
+        return 255 - image
+
+

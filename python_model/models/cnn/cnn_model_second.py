@@ -1,6 +1,7 @@
 from models.model import Model
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class HandwritingCNN(Model):
     def __init__(self, num_classes):
@@ -16,7 +17,7 @@ class HandwritingCNN(Model):
         x = self.pool1(F.relu(self.conv1(x)))
         x = self.pool2(F.relu(self.conv2(x)))
         x = x.view(-1, 64 * 16 * 16)
-        x = self.relu(self.fc1(x))
+        x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
         return x

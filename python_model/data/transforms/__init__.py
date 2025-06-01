@@ -1,1 +1,1 @@
-from .transforms import Transform, Resize, Threshold, ToNumpy, Compose, ToTensor
+from .transforms import Transform, Resize, Threshold, ToNumpy, Compose, ToTensor, Erode, Invert
