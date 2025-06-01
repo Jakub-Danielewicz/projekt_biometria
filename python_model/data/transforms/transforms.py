@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from torchvision.transforms import ToTensor as TorchvisionToTensor
+import random
 
 class Transform:
     """Base class for all transforms."""
@@ -59,5 +60,24 @@ class Erode(Transform):
 class Invert(Transform):
     def __call__(self, image):
         return 255 - image
+
+class RandomRotate(Transform):
+    def __init__(self, angle=10):
+        self.angle = angle
+    def __call__(self, image):
+        h, w = image.shape[:2]
+        angle = random.uniform(-self.angle, self.angle)
+        M = cv2.getRotationMatrix2D((w/2, h/2), angle, 1)
+        return cv2.warpAffine(image, M, (w, h), borderValue=255)
+
+class RandomShift(Transform):
+    def __init__(self, max_shift=4):
+        self.max_shift = max_shift
+    def __call__(self, image):
+        h, w = image.shape[:2]
+        tx = random.randint(-self.max_shift, self.max_shift)
+        ty = random.randint(-self.max_shift, self.max_shift)
+        M = np.float32([[1, 0, tx], [0, 1, ty]])
+        return cv2.warpAffine(image, M, (w, h), borderValue=255)
 
 

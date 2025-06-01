@@ -4,7 +4,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data.dataloader import default_collate
 
 class OCRDataLoader(DataLoader):
-    def __init__(self, dataset, batch_size=32, shuffle=True, validation_split=0.0, training=True, num_workers=4, collate_fn=default_collate):
+    def __init__(self, dataset, batch_size=32, shuffle=True, validation_split=0.0, training=True, num_workers=4, collate_fn=default_collate, dropLast = True):
         self.validation_split = validation_split
         self.shuffle = shuffle
 
@@ -19,9 +19,8 @@ class OCRDataLoader(DataLoader):
             'shuffle': self.shuffle,
             'collate_fn': collate_fn,
             'num_workers': num_workers,
-            'drop_last': True
         }
-        super().__init__(sampler=self.sampler, **self.init_kwargs)
+        super().__init__(sampler=self.sampler, drop_last = dropLast,**self.init_kwargs)
         
     def _split_sampler(self, split):
         if split == 0.0:
@@ -55,6 +54,6 @@ class OCRDataLoader(DataLoader):
         if self.valid_sampler is None:
             return None
         else:
-            return DataLoader(sampler=self.valid_sampler, **self.init_kwargs)
+            return DataLoader(sampler=self.valid_sampler, drop_last = False, **self.init_kwargs)
     def get_dataloader(self):
         return DataLoader(self.dataset, batch_size=self.batch_size, shuffle=self.shuffle, num_workers=self.num_workers)
