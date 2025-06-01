@@ -32,6 +32,7 @@ VAL_EVERY = 3
 BATCH_SIZE =  32
 LR = 0.001
 DATA_DIR = "./data/set/output_letters_cleaned"
+NUM_EPOCHS = 1000
 
 if __name__ == "__main__":
     # Transform pipeline
@@ -75,7 +76,7 @@ if __name__ == "__main__":
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
     # --- Trening ---
-    for epoch in range(15):
+    for epoch in range(NUM_EPOCHS):
         dataset.transform = train_transform
         model.train()
         total_loss = 0
