@@ -182,3 +182,4 @@ cython_debug/
 images/
 images_processed/
 *.pth
+.env

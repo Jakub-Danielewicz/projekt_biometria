@@ -7,6 +7,16 @@ from models.mlp import  HandwritingMLP
 
 from data import scan_image_folder, OCRDataset, OCRDataLoader
 from data.transforms import Compose, Resize, Threshold, ToTensor, Erode, Invert, RandomShift, RandomRotate
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+MODEL = os.getenv("MODEL")
+BATCH_SIZE = int(os.getenv("BATCH_SIZE"))
+LR = float(os.getenv("LEARNING_RATE"))
+NUM_EPOCHS = int(os.getenv("NUM_EPOCHS"))
+VAL_EVERY = int(os.getenv("VAL_EVERY"))
+DATA_DIR = os.getenv("DATA_DIR")
 
 def validateModel(model, dataloader):   
     global device, setoflabels, dataset
@@ -27,12 +37,6 @@ def validateModel(model, dataloader):
             correct += (preds == labels).sum().item()
             total += labels.size(0)
     return correct/total
-
-VAL_EVERY = 3
-BATCH_SIZE =  32
-LR = 0.001
-DATA_DIR = "./data/set/output_letters_cleaned"
-NUM_EPOCHS = 1000
 
 if __name__ == "__main__":
     # Transform pipeline
@@ -70,7 +74,14 @@ if __name__ == "__main__":
     if torch.cuda.is_available():
         print("Trenowanie na CUDA")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = HandwritingMLP(num_classes=len(set(labels))).to(device)
+    if MODEL == "HandwritingMLP":
+        model = HandwritingMLP(num_classes=len(set(labels))).to(device)
+    elif MODEL == "HandwritingCNN":
+        model = HandwritingCNN(num_classes=len(set(labels))).to(device)
+    elif MODEL == "HandwritingOCRNet":
+        model = HandwritingOCRNet(num_classes=len(set(labels))).to(device)
+    else:
+        raise ValueError(f"Nieznany model: {MODEL}")
 
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
