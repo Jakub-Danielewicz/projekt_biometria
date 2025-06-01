@@ -31,8 +31,7 @@ def validateModel(model, dataloader):
 VAL_EVERY = 3
 BATCH_SIZE =  32
 LR = 0.001
-NUM_EPOCHS = 100
-DATA_DIR = "./python_model/data/set/output_letters_cleaned"
+DATA_DIR = "./data/set/output_letters_cleaned"
 
 if __name__ == "__main__":
     # Transform pipeline
