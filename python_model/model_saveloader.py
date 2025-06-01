@@ -1,15 +1,15 @@
 import torch
 
 
-def save_checkpoint(model, optimizer, epoch, loss, filename):
+def save_checkpoint(model, optimizer, epoch, loss, filename=None):
      checkpoint = {
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': loss
-    }
+        }
      if filename is None:
-          filename = f"checkpoint_epoch{epoch}_loss{total_loss:.4f}.pt"
+          filename = f"checkpoint_epoch{epoch}_loss{loss:.4f}.pt"
      torch.save(checkpoint, filename)
      print(f"Zapisano model do {filename}")
 

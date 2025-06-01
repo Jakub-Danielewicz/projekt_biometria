@@ -8,6 +8,8 @@ from models.mlp import  HandwritingMLP
 from data import scan_image_folder, OCRDataset, OCRDataLoader
 from data.transforms import Compose, Resize, Threshold, ToTensor, Erode, Invert, RandomShift, RandomRotate
 
+from model_saveloader import save_checkpoint, load_checkpoint
+
 def validateModel(model, dataloader):   
     global device, setoflabels, dataset
     dataset.transform = val_transform
@@ -30,8 +32,8 @@ def validateModel(model, dataloader):
 
 VAL_EVERY = 3
 BATCH_SIZE =  32
-LR = 0.001
-DATA_DIR = "./data/set/output_letters_cleaned"
+LR = 0.01
+DATA_DIR = "python_model/data/output_letters_cleaned"
 
 if __name__ == "__main__":
     # Transform pipeline
@@ -74,8 +76,11 @@ if __name__ == "__main__":
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
+    #wczytanie checkpointu - trzeba podać nazwę pliku
+    #load_checkpoint(model, optimizer, "Nazwa_checkpointu.pt")
+
     # --- Trening ---
-    for epoch in range(15):
+    for epoch in range(6):
         dataset.transform = train_transform
         model.train()
         total_loss = 0
@@ -102,16 +107,8 @@ if __name__ == "__main__":
         if (epoch+1)%VAL_EVERY == 0:
             print(f"Dokładność na zbiorze walidacyjnym: {validateModel(model, val_loader)*100}%")
 
-    checkpoint = {
-        'epoch': epoch,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'loss': loss
-    }
 
-    # Nazwa pliku np. na podstawie parametrów
-    filename = f"checkpoint_epoch{epoch}_loss{total_loss:.4f}.pt"
+    #zapis checkpointu - nazwa generuje się na podstawie epoch i loss lub można podać własną
+    save_checkpoint(model, optimizer, epoch, total_loss)
 
-    # Zapis do pliku
-    torch.save(checkpoint, filename)
-    print(f"Zapisano model do {filename}")
+ 
