@@ -22,15 +22,16 @@ def validateModel(model, dataloader):
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             _, preds = torch.max(outputs, 1)
-            for p, l in zip(preds.tolist(), labels.tolist()):
-                print(f"Predykcja: {setoflabels[p]}, label: {setoflabels[l]}")
+            #for p, l in zip(preds.tolist(), labels.tolist()):
+            #    print(f"Predykcja: {setoflabels[p]}, label: {setoflabels[l]}")
             correct += (preds == labels).sum().item()
             total += labels.size(0)
     return correct/total
 
 VAL_EVERY = 3
 BATCH_SIZE =  32
-LR = 0.0005
+LR = 0.001
+NUM_EPOCHS = 50
 DATA_DIR = "./python_model/data/set/output_letters_cleaned"
 
 if __name__ == "__main__":
@@ -69,13 +70,13 @@ if __name__ == "__main__":
     if torch.cuda.is_available():
         print("Trenowanie na CUDA")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = HandwritingMLP(num_classes=len(set(labels))).to(device)
+    model = HandwritingOCRNet(num_classes=len(set(labels))).to(device)
 
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
     # --- Trening ---
-    for epoch in range(15):
+    for epoch in range(NUM_EPOCHS):
         dataset.transform = train_transform
         model.train()
         total_loss = 0
