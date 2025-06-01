@@ -6,21 +6,24 @@ from models.cnn import HandwritingCNN, HandwritingOCRNet
 from models.mlp import  HandwritingMLP
 
 from data import scan_image_folder, OCRDataset, OCRDataLoader
-from data.transforms import Compose, Resize, Threshold, ToTensor, Erode, Invert
+from data.transforms import Compose, Resize, Threshold, ToTensor, Erode, Invert, RandomShift, RandomRotate
 
-#from save_model import save_checkpoint, load_checkpoint, generate_checkpoint_name
-
-def validateModel(model, dataloader):
-    global device
+def validateModel(model, dataloader):   
+    global device, setoflabels, dataset
+    dataset.transform = val_transform
     model.eval()
     correct = 0
     total = 0
     total_loss = 0
     with torch.no_grad():
         for images, labels in dataloader:
+            if len(images) == 0:
+                continue
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             _, preds = torch.max(outputs, 1)
+            for p, l in zip(preds.tolist(), labels.tolist()):
+                print(f"Predykcja: {setoflabels[p]}, label: {setoflabels[l]}")
             correct += (preds == labels).sum().item()
             total += labels.size(0)
     return correct/total
@@ -33,20 +36,27 @@ DATA_DIR = "./python_model/data/set/output_letters_cleaned"
 
 if __name__ == "__main__":
     # Transform pipeline
-    transform = Compose([
+    train_transform = Compose([
+    Resize((64, 64)),
+    RandomRotate(angle=10),
+    RandomShift(max_shift=4),
+    ToTensor()
+    ])
+
+    val_transform = Compose([
         Resize((64, 64)),
-        Threshold(190),
-        Erode(),
         ToTensor()
     ])
 
 
     image_paths, labels = scan_image_folder(DATA_DIR)
+    setoflabels = sorted(set(labels))
     class_to_idx = {cls: idx for idx, cls in enumerate(sorted(set(labels)))}
     labels = [class_to_idx[l] for l in labels]
 
-    dataset = OCRDataset(image_paths, labels, transform=transform)
-    dataset.apply_transform()
+    print(image_paths[0], labels[0])
+    dataset = OCRDataset(image_paths, labels, transform=train_transform)
+    #dataset.apply_transform()
 
     # Tworzenie dataloadera z podziałem na walidację
     dataloader = OCRDataLoader(dataset, batch_size=BATCH_SIZE, validation_split=0.2, shuffle=True)
@@ -66,7 +76,8 @@ if __name__ == "__main__":
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
     # --- Trening ---
-    for epoch in range(3):
+    for epoch in range(15):
+        dataset.transform = train_transform
         model.train()
         total_loss = 0
         i = 0
@@ -75,6 +86,8 @@ if __name__ == "__main__":
            # print("images:", images.shape, images.min().item(), images.max().item())
            # print("labels:", labels[:10])
             #break
+            if len(images) == 0:
+                continue
             images, labels = images.to(device), labels.to(device)
             optimizer.zero_grad()
             outputs = model(images)
