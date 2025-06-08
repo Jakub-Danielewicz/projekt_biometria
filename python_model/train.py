@@ -9,6 +9,7 @@ from data import scan_image_folder, OCRDataset, OCRDataLoader
 from data.transforms import Compose, Resize, Threshold, ToTensor, Erode, Invert, RandomShift, RandomRotate
 
 from model_saveloader import save_checkpoint, load_checkpoint
+from visualizer import visualize_predictions
 
 def validateModel(model, dataloader):   
     global device, setoflabels, dataset
@@ -76,11 +77,11 @@ if __name__ == "__main__":
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
-    #wczytanie checkpointu - trzeba podać nazwę pliku
-    #load_checkpoint(model, optimizer, "Nazwa_checkpointu.pt")
+    #wczytanie checkpointu 
+    model, optimizer, start_epoch, loss = load_checkpoint("checkp_1.pt")
 
     # --- Trening ---
-    for epoch in range(6):
+    for epoch in range(10):
         dataset.transform = train_transform
         model.train()
         total_loss = 0
@@ -109,6 +110,8 @@ if __name__ == "__main__":
 
 
     #zapis checkpointu - nazwa generuje się na podstawie epoch i loss lub można podać własną
-    save_checkpoint(model, optimizer, epoch, total_loss)
+    model._kwargs = {'num_classes': len(setoflabels)}
+    save_checkpoint(model, optimizer, epoch, total_loss, LR, "checkp_2.pt")
 
+    visualize_predictions(model, val_loader, class_names = setoflabels, device=device, num_images=6)
  
