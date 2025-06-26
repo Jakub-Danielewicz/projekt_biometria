@@ -12,8 +12,7 @@ def save_checkpoint(model, optimizer, epoch, loss, LR, filename=None):
     'model_type': type(model).__name__,
     'optimizer_type': type(optimizer).__name__,
     'model_kwargs': model.__dict__.get('_kwargs', {}),
-    'optimizer_kwargs': optimizer.defaults if hasattr(optimizer, 'defaults') else {},
-    'optimizer_kwargs': {'lr': LR},
+    'optimizer_kwargs': {**(optimizer.defaults if hasattr(optimizer, 'defaults') else {}), 'lr': LR},
      }
      if filename is None:
           filename = f"checkpoint_epoch{epoch}_loss{loss:.4f}.pt"
