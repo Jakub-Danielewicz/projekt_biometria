@@ -53,7 +53,10 @@ conda activate <nazwa_środowiska>
 ℹ️ **Uwaga:** Nazwa środowiska znajduje się w pliku `environment.yml` w linii `name:`.
 
 ---
-
+  **Uwaga:** Przy zmianie  pliku `environment.yml` przez innych należy wykonać: 
+  ```bash
+  conda env update --file environment.yml --prune
+  ```
 ## 🚀 Uruchamianie projektu
 
 Po aktywacji środowiska możesz uruchomić projekt, np.:
