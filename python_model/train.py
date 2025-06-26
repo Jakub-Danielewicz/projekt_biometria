@@ -41,14 +41,6 @@ def validateModel(model, dataloader):
             total += labels.size(0)
     return correct/total
 
-<<<<<<< Marta
-VAL_EVERY = 3
-BATCH_SIZE =  32
-LR = 0.01
-DATA_DIR = "python_model/data/output_letters_cleaned"
-
-=======
->>>>>>> main
 if __name__ == "__main__":
     # Transform pipeline
     train_transform = Compose([
@@ -97,15 +89,8 @@ if __name__ == "__main__":
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
-    #wczytanie checkpointu 
-    model, optimizer, start_epoch, loss = load_checkpoint("checkp_1.pt")
-
     # --- Trening ---
-<<<<<<< Marta
-    for epoch in range(10):
-=======
     for epoch in range(NUM_EPOCHS):
->>>>>>> main
         dataset.transform = train_transform
         model.train()
         total_loss = 0
@@ -134,7 +119,7 @@ if __name__ == "__main__":
 
 
     #zapis checkpointu - nazwa generuje się na podstawie epoch i loss lub można podać własną
-    model._kwargs = {'num_classes': len(setoflabels)}
+    setattr(model, '_kwargs', {'num_classes': len(setoflabels)})
     save_checkpoint(model, optimizer, epoch, total_loss, LR, "checkp_2.pt")
 
     visualize_predictions(model, val_loader, class_names = setoflabels, device=device, num_images=6)
