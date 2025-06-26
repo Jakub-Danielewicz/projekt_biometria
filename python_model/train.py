@@ -18,6 +18,9 @@ NUM_EPOCHS = int(os.getenv("NUM_EPOCHS"))
 VAL_EVERY = int(os.getenv("VAL_EVERY"))
 DATA_DIR = os.getenv("DATA_DIR")
 
+from model_saveloader import save_checkpoint, load_checkpoint
+from visualizer import visualize_predictions
+
 def validateModel(model, dataloader):   
     global device, setoflabels, dataset
     dataset.transform = val_transform
@@ -38,6 +41,14 @@ def validateModel(model, dataloader):
             total += labels.size(0)
     return correct/total
 
+<<<<<<< Marta
+VAL_EVERY = 3
+BATCH_SIZE =  32
+LR = 0.01
+DATA_DIR = "python_model/data/output_letters_cleaned"
+
+=======
+>>>>>>> main
 if __name__ == "__main__":
     # Transform pipeline
     train_transform = Compose([
@@ -86,8 +97,15 @@ if __name__ == "__main__":
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
+    #wczytanie checkpointu 
+    model, optimizer, start_epoch, loss = load_checkpoint("checkp_1.pt")
+
     # --- Trening ---
+<<<<<<< Marta
+    for epoch in range(10):
+=======
     for epoch in range(NUM_EPOCHS):
+>>>>>>> main
         dataset.transform = train_transform
         model.train()
         total_loss = 0
@@ -114,16 +132,10 @@ if __name__ == "__main__":
         if (epoch+1)%VAL_EVERY == 0:
             print(f"Dokładność na zbiorze walidacyjnym: {validateModel(model, val_loader)*100}%")
 
-    checkpoint = {
-        'epoch': epoch,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        'loss': loss
-    }
 
-    # Nazwa pliku np. na podstawie parametrów
-    filename = f"checkpoint_epoch{epoch}_loss{total_loss:.4f}.pt"
+    #zapis checkpointu - nazwa generuje się na podstawie epoch i loss lub można podać własną
+    model._kwargs = {'num_classes': len(setoflabels)}
+    save_checkpoint(model, optimizer, epoch, total_loss, LR, "checkp_2.pt")
 
-    # Zapis do pliku
-    torch.save(checkpoint, filename)
-    print(f"Zapisano model do {filename}")
+    visualize_predictions(model, val_loader, class_names = setoflabels, device=device, num_images=6)
+ 
