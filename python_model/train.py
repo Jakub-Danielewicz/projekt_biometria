@@ -7,6 +7,16 @@ from models.mlp import  HandwritingMLP
 
 from data import scan_image_folder, OCRDataset, OCRDataLoader
 from data.transforms import Compose, Resize, Threshold, ToTensor, Erode, Invert, RandomShift, RandomRotate
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+MODEL = os.getenv("MODEL")
+BATCH_SIZE = int(os.getenv("BATCH_SIZE"))
+LR = float(os.getenv("LEARNING_RATE"))
+NUM_EPOCHS = int(os.getenv("NUM_EPOCHS"))
+VAL_EVERY = int(os.getenv("VAL_EVERY"))
+DATA_DIR = os.getenv("DATA_DIR")
 
 from model_saveloader import save_checkpoint, load_checkpoint
 from visualizer import visualize_predictions
@@ -25,17 +35,20 @@ def validateModel(model, dataloader):
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             _, preds = torch.max(outputs, 1)
-            for p, l in zip(preds.tolist(), labels.tolist()):
-                print(f"Predykcja: {setoflabels[p]}, label: {setoflabels[l]}")
+           # for p, l in zip(preds.tolist(), labels.tolist()):
+            #    print(f"Predykcja: {setoflabels[p]}, label: {setoflabels[l]}")
             correct += (preds == labels).sum().item()
             total += labels.size(0)
     return correct/total
 
+<<<<<<< Marta
 VAL_EVERY = 3
 BATCH_SIZE =  32
 LR = 0.01
 DATA_DIR = "python_model/data/output_letters_cleaned"
 
+=======
+>>>>>>> main
 if __name__ == "__main__":
     # Transform pipeline
     train_transform = Compose([
@@ -72,7 +85,14 @@ if __name__ == "__main__":
     if torch.cuda.is_available():
         print("Trenowanie na CUDA")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = HandwritingMLP(num_classes=len(set(labels))).to(device)
+    if MODEL == "HandwritingMLP":
+        model = HandwritingMLP(num_classes=len(set(labels))).to(device)
+    elif MODEL == "HandwritingCNN":
+        model = HandwritingCNN(num_classes=len(set(labels))).to(device)
+    elif MODEL == "HandwritingOCRNet":
+        model = HandwritingOCRNet(num_classes=len(set(labels))).to(device)
+    else:
+        raise ValueError(f"Nieznany model: {MODEL}")
 
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
@@ -81,7 +101,11 @@ if __name__ == "__main__":
     model, optimizer, start_epoch, loss = load_checkpoint("checkp_1.pt")
 
     # --- Trening ---
+<<<<<<< Marta
     for epoch in range(10):
+=======
+    for epoch in range(NUM_EPOCHS):
+>>>>>>> main
         dataset.transform = train_transform
         model.train()
         total_loss = 0
