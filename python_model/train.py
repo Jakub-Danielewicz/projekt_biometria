@@ -1,4 +1,3 @@
-#To jest wzięte żywcem z chata jkc z minimalnymi modyfikacjami
 import torch
 import torch.nn as nn
 import torch.optim as optim
